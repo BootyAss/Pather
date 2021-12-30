@@ -140,7 +140,7 @@ function setup(x, y) {
 
     let tableContainer = document.getElementById('TabCon');
     tableContainer.onmousedown = function () { mouseDown = true; }
-    tableContainer.onmouseup = function () { mouseDown = false; }
+    document.onmouseup = function () { mouseDown = false; }
     tableContainer.style.width = (cellSize * x).toString() + 'px';
     tableContainer.style.height = (cellSize * y).toString() + 'px';
 

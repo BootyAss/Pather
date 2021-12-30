@@ -8,12 +8,7 @@ var cellSize = 31;
 
 let tableSize = [20, 20];
 let buttonTypes = ['empty', 'wall', 'start', 'end'];
-let buttonColors = {
-    'empty': '#ffffff',
-    'wall': '#3d3dff',
-    'start': '#3dff3d',
-    'end': '#ff3d3d'
-}
+
 
 function cellAnimation(cell) {
     cell.style.zIndex = 100;

@@ -4,6 +4,13 @@ body {
     padding: 0;
     background-color: #ffffff;
     height: 100%;
+    /*  */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .button-container {
@@ -68,8 +75,9 @@ body {
     margin: -1px -0.5px;
     padding: 15px;
     border: 1px solid #00000080;
-    border-radius: 10%;
+    /* border-radius: 10%; */
     cursor: pointer;
+    font-size: 10px;
 }
 
 .cell.empty {
@@ -86,4 +94,8 @@ body {
 
 .cell.end {
     background-color: #ff3d3df4;
+}
+
+.cell.path {
+    background-color: #ffa4a4f4;
 }

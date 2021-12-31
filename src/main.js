@@ -1,16 +1,31 @@
-var isSet;
-var walls = null;
-var pointType = 'wall'
+import { Algorithms } from './paths.js';
+
+
+var isSet;                 // true if all is setup
 var start = null;
 var end = null;
+var walls = {};
+var tableSize = [20, 20];
+var cellSize = 32;
+var pointType = 'wall'
+var buttonTypes = ['empty', 'wall', 'start', 'end', 'path'];
 var mouseDown = false;
-var cellSize = 31;
+var algorithm = Algorithms.BFS;
+var path = null;
+var drawingPath = false;
 
-let tableSize = [20, 20];
-let buttonTypes = ['empty', 'wall', 'start', 'end'];
 
+function clearLastPath() {
+    if (path)
+        for (let p of path)
+            changeCellType(null, 'empty', document.getElementById(p));
+}
 
 function cellAnimation(cell) {
+    if (cell.className == 'cell empty') {
+        console.log(cell.className);
+        return
+    }
     cell.style.zIndex = 100;
     let scale = 1.0;
     let halfway = false;
@@ -30,31 +45,33 @@ function cellAnimation(cell) {
             cell.style.transform = 'scale(' + scale.toString() + ')'
         }
     }
+    return true;
 }
 
-function toggleWalls(i, j) {
-    walls[i][j] += 1;
-    walls[i][j] %= 2;
+function toggleWalls(index) {
+    if (walls[index])
+        delete walls[index];
+    else
+        walls[index] = true;
 }
 
 function toggleCellColor(cell, type) {
     cell.className = 'cell ' + type;
 }
 
-function changeCellTypeIfDragged(e) {
+function changeCellTypeIfDragged(e, type) {
     if (mouseDown)
-        changeCellType(e);
+        changeCellType(e, type);
 }
 
-function changeCellType(e) {
-    let cell = e.target;
+function changeCellType(e, type, _cell) {
+    let cell = e ? e.target : _cell;
     let oldType = cell.className.substr(5)
-
-    let i = cell.getAttribute('i');
-    let j = cell.getAttribute('j');
+    let index = cell.getAttribute('index');
 
     let newType = null;
-    switch (pointType) {
+    let recalculate = false;
+    switch (type) {
         case 'empty':
             newType = 'empty';
             switch (oldType) {
@@ -65,7 +82,7 @@ function changeCellType(e) {
                     end = null;
                     break;
                 case 'wall':
-                    toggleWalls(i, j);
+                    toggleWalls(index);
             }
             break;
 
@@ -81,10 +98,13 @@ function changeCellType(e) {
                 case 'wall':
                     newType = 'empty'
             }
-            toggleWalls(i, j);
+            toggleWalls(index);
             break;
 
         case 'start':
+            if (drawingPath)
+                return
+            clearLastPath();
             newType = 'start';
             if (start)
                 toggleCellColor(start, 'empty')
@@ -94,11 +114,16 @@ function changeCellType(e) {
                     end = null;
                     break;
                 case 'wall':
-                    toggleWalls(i, j);
+                    toggleWalls(index);
             }
+            if (!drawingPath)
+                recalculate = true;
             break;
 
         case 'end':
+            if (drawingPath)
+                return
+            clearLastPath();
             newType = 'end';
             if (end)
                 toggleCellColor(end, 'empty')
@@ -108,27 +133,29 @@ function changeCellType(e) {
                     start = null;
                     break;
                 case 'wall':
-                    toggleWalls(i, j);
+                    toggleWalls(index);
             }
+            recalculate = true;
             break;
+
+        case 'path':
+            newType = 'path';
     }
 
     toggleCellColor(cell, newType);
     if (newType != oldType)
         cellAnimation(cell)
+
+    if (recalculate)
+        calculatePath();
 }
 
 function changePointType(e) {
-    button = e.target;
+    let button = e.target;
     pointType = button.innerHTML;
 }
 
 function setup(x, y) {
-    walls = new Array(y);
-    for (let i = 0; i < y; i++) {
-        walls[i] = new Array(x).fill(0);
-    }
-
     let buttons = document.getElementById('ButCon');
     for (let type of buttonTypes) {
         let button = document.createElement('div');
@@ -145,28 +172,63 @@ function setup(x, y) {
     tableContainer.style.height = (cellSize * y).toString() + 'px';
 
     let table = document.getElementById('Tab');
-    for (let i = 0; i < x; i++) {
+    for (let i = 0; i < y; i++) {
         let column = document.createElement('div');
         column.className = 'column';
         table.appendChild(column);
 
-        for (let j = 0; j < y; j++) {
+        for (let j = 0; j < x; j++) {
             let cell = document.createElement('div');
             cell.className = 'cell empty';
-            cell.setAttribute('i', j.toString());
-            cell.setAttribute('j', i.toString());
-            cell.addEventListener('mousedown', function (e) { changeCellType(e); });
-            cell.addEventListener('mouseenter', function (e) { changeCellTypeIfDragged(e); });
+            let idx = j * x + i;
+
+            cell.id = idx.toString();
+            cell.addEventListener('mousedown', function (e) { changeCellType(e, pointType); });
+            cell.addEventListener('mouseenter', function (e) { changeCellTypeIfDragged(e, pointType); });
 
             column.appendChild(cell);
         }
     }
-
 }
 
 
-if (!isSet) {
-    isSet = true;
-    setup(...tableSize);
+
+function drawPath(cellPath, delay) {
+    let id = null;
+    let idx = 0;
+    clearInterval(id);
+    id = setInterval(drawPathCell, delay);
+    let cell = cellPath[idx];
+    function drawPathCell() {
+        if (cellPath.length == idx) {
+            clearInterval(id);
+            drawingPath = false;
+        }
+        else {
+            changeCellType(null, 'path', cell);
+            cellAnimation(cell);
+            idx += 1;
+            cell = cellPath[idx];
+        }
+    }
 }
 
+
+
+
+function calculatePath() {
+    if (start && end) {
+        drawingPath = true;
+        let from = parseInt(start.id);
+        let to = parseInt(end.id);
+
+        path = algorithm(from, to, tableSize[0], tableSize[1], walls)
+        let cellPath = [];
+        for (let p of path)
+            cellPath.push(document.getElementById(p));
+        drawPath(cellPath, 10);
+    }
+}
+
+
+setup(...tableSize);

@@ -3,7 +3,7 @@ import { Algorithms } from './paths.js';
 
 var isSet;                 // true if all is setup
 var cellSize = 19;
-var tableSize = [31, 31];
+var tableSize = [41, 41];
 var walls = {};
 var start = null;
 var end = null;

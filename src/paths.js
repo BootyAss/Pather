@@ -48,7 +48,6 @@ function getLegalNeighbours(idx, x, y, walls) {
 
 
 function _BFS(start, end, x, y, walls) {
-    // console.log(start, end, x, y, walls)
     let queue = [];
     queue.push(start);
 
@@ -93,18 +92,93 @@ function rand(len) {
     return Math.round(Math.random() * len);
 }
 
-function _Maze(x, y) {
-    let walls = {}
-    for (let i = 1; i < x; i += 2) {
-        for (let j = 1; j < y; j += 2) {
-            let d = i + j * x;
-            if (d < x * y)
-                walls[d] = true;
-            d = (i + rand(2) - 1) + (j + rand(2) - 1) * x;
-            if (d < x * y)
-                walls[d] = true;
+
+
+
+function getNeighbours(A, x, y) {
+    let directions = {};
+
+    let n = 0;
+    for (let idx of A) {
+        n = idx - 2 * x;    // top
+        if (n >= 0 && !(A.includes(n))) {
+            if (!directions[idx])
+                directions[idx] = [];
+            directions[idx].push(n);
+        }
+        n = idx + 2 * x;    // bot
+        if (n < x * y && !(A.includes(n))) {
+            if (!directions[idx])
+                directions[idx] = [];
+            directions[idx].push(n);
+        }
+
+        n = idx - 2;    // left
+        if ((idx % x) != 0 && !(A.includes(n))) {
+            if (!directions[idx])
+                directions[idx] = [];
+            directions[idx].push(n);
+        }
+
+        n = idx + 2;    // right
+        if ((idx % x) != (x - 1) && !(A.includes(n))) {
+            if (!directions[idx])
+                directions[idx] = [];
+            directions[idx].push(n);
         }
     }
+    return directions;
+}
+
+function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key].includes(value));
+}
+
+function _Maze(x, y) {
+    let walls = {}
+    let sets = {}
+    let maxIdx = x * y;
+    let out = '';
+    for (let i = 0; i < x; i++) {
+        for (let j = 0; j < y; j++) {
+            if (i % 2 == 0 && j % 2 == 0) {
+                sets[i * x + j] = Array(1);
+                sets[i * x + j][0] = i * x + j;
+            }
+            else
+                walls[i * x + j] = true
+        }
+    }
+    console.log(sets)
+
+    let i = 0;
+    while (i < (x * y)) {
+        i++;
+        let keys = Object.keys(sets);
+        if (keys.length < 2) {
+            break;
+        }
+        let keyA = parseInt(keys[rand(keys.length - 1)]);
+
+        let nghsDict = getNeighbours(sets[keyA], x, y); // { keyA -> [keyA nghbs] } 
+
+        let nghKeysA = (Object.keys(nghsDict));
+        if (nghKeysA.length <= 0)
+            continue;
+
+        let orig = nghKeysA[rand(nghKeysA.length - 1)];
+        let nghs = nghsDict[orig];                      // keyA nghbs
+        let elemB = nghs[rand(nghs.length - 1)];
+        let keyB = getKeyByValue(sets, elemB);
+
+        for (let j = 0; j < sets[keyB].length; j++)
+            sets[keyA].push(sets[keyB][j]);
+        delete sets[keyB];
+        delete walls[elemB - (elemB - orig) / 2];
+    }
+
+
+
     return walls;
 }
 

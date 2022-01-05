@@ -11,14 +11,16 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    background-color: rgb(192, 230, 243);
 }
 
 .type-container {
     display: flex;
-    margin-top: 50px;
+    /* margin-top: 50px; */
     height: 100px;
     justify-content: center;
     align-items: center;
+    background-color: rgb(62, 159, 223);
 }
 
 .type {
@@ -51,17 +53,22 @@ body {
 .type.start {
     background: url(../static/start.png) no-repeat center center;
     background-size: cover;
+    background-color: #ffffffF4;
 }
 
 .type.end {
     background: url(../static/end.png) no-repeat center center;
     background-size: cover;
+    background-color: #ffffffF4;
+}
+
+.content {
+    background-color: rgb(192, 230, 243);
 }
 
 .table-container {
-    padding: 0;
+    padding: 50px;
     margin: 0 auto;
-    margin-top: 50px;
 }
 
 .table {
@@ -72,7 +79,7 @@ body {
 
 .cell {
     margin: -1px -0.5px;
-    border: 1px solid #00000040;
+    border: 1px solid rgba(255, 255, 255, 0);
     /* border-radius: 10%; */
     cursor: pointer;
     font-size: 10px;
@@ -83,8 +90,8 @@ body {
 }
 
 .cell.wall {
-    background-color: #3d3dff;
-    border: 1px solid #3d3dff;
+    background-color: #3d3dffF4;
+    border: 1px solid #3d3dffF4;
 }
 
 .cell.start {
@@ -102,6 +109,6 @@ body {
 }
 
 .cell.path {
-    background-color: #fffd70;
-    border: 1px solid #fffd70;
+    background-color: #f3f194;
+    border: 1px solid #f3f194;
 }

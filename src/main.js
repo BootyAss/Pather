@@ -2,8 +2,8 @@ import { Algorithms } from './paths.js';
 
 
 var isSet;                 // true if all is setup
-var cellSize = 25;
-var tableSize = [70, 30];
+var cellSize = 19;
+var tableSize = [31, 31];
 var walls = {};
 var start = null;
 var end = null;
@@ -36,7 +36,10 @@ function cellAnimation(cell) {
 
     cell.style.zIndex = 10;
     let scale = 1.0;
-    let maxScale = 0.9;
+    let maxScale = 1.0;
+    if (cell.className == 'cell wall') {
+        maxScale = 0.9;
+    }
     let minScale = 0.2;
     let halfway = false;
 
@@ -75,17 +78,16 @@ function changeCellTypeIfDragged(e, type) {
         changeCellType(e, type);
 }
 
-function changeCellType(e, type, _cell, anim = true) {
+function changeCellType(e, type, _cell, anim = true, scale = 1.0) {
     let cell = e ? e.target : _cell;
     let oldType = cell.className.substr(5)
     let id = cell.id;
 
     let newType = null;
     let recalculate = false;
-
+    cell.style.transform = 'scale(' + scale + ')';
     switch (type) {
         case 'empty':
-            cell.style.transform = 'scale(' + 1 + ')';
             newType = 'empty';
             switch (oldType) {
                 case 'start':
@@ -168,6 +170,7 @@ function changePointType(e) {
     pointType = typeButton.className.substr(5);
 }
 
+
 function setup(x, y) {
     let typeButtons = document.getElementById('TypCon');
     for (let type of types.slice(0, -1)) {
@@ -203,9 +206,10 @@ function setup(x, y) {
             column.appendChild(cell);
         }
     }
+
     let twalls = Algorithms.Maze(...tableSize);
     for (const [key, value] of Object.entries(twalls)) {
-        changeCellType(null, 'wall', document.getElementById(key), false);
+        changeCellType(null, 'wall', document.getElementById(key), false, 0.9);
     }
 }
 
@@ -247,7 +251,7 @@ function calculatePath() {
         let cellPath = [];
         for (let p of path)
             cellPath.push(document.getElementById(p));
-        drawPath(cellPath, 10);
+        drawPath(cellPath, 1);
     }
 }
 

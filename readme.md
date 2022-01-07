@@ -4,5 +4,5 @@
 # Checkout [website](https://bootyass.github.io/Pather/).
 
 ```
-Copyright 2021, Evula A. S., All rights reserved.
+Copyright 2022, Evula A. S., All rights reserved.
 ```

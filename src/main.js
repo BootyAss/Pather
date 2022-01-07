@@ -1,9 +1,9 @@
 import { Algorithms } from './paths.js';
 
 
-var isSet;                 // true if all is setup
-var cellSize = 19;
-var tableSize = [41, 41];
+var isSet; // true if all is setup
+var cellSize = 21;
+var tableSize = [71, 31];
 var walls = {};
 var start = null;
 var end = null;
@@ -36,9 +36,9 @@ function cellAnimation(cell) {
 
     cell.style.zIndex = 10;
     let scale = 1.0;
-    let maxScale = 1.0;
-    if (cell.className == 'cell wall') {
-        maxScale = 0.9;
+    let maxScale = 0.9;
+    if (cell.className == 'cell path') {
+        maxScale = 1.0;
     }
     let minScale = 0.2;
     let halfway = false;
@@ -46,11 +46,11 @@ function cellAnimation(cell) {
     let id = null;
     clearInterval(id);
     id = setInterval(scaleAnimation, 1);
+
     function scaleAnimation() {
         if (scale >= maxScale && halfway) {
             clearInterval(id);
-        }
-        else {
+        } else {
             if (scale < minScale)
                 halfway = true;
             scale += halfway ? 0.01 : -0.04;
@@ -176,13 +176,13 @@ function setup(x, y) {
     for (let type of types.slice(0, -1)) {
         let typeButton = document.createElement('div');
         typeButton.className = 'type ' + type;
-        typeButton.onclick = function (e) { changePointType(e); };
+        typeButton.onclick = function(e) { changePointType(e); };
         typeButtons.appendChild(typeButton);
     }
 
     let tableContainer = document.getElementById('TabCon');
-    tableContainer.onmousedown = function () { mouseDown = true; }
-    document.onmouseup = function () { mouseDown = false; }
+    tableContainer.onmousedown = function() { mouseDown = true; }
+    document.onmouseup = function() { mouseDown = false; }
     tableContainer.style.width = (cellSize * x).toString() + 'px';
     tableContainer.style.height = (cellSize * y).toString() + 'px';
 
@@ -200,8 +200,8 @@ function setup(x, y) {
             cell.id = idx.toString();
             cell.style.padding = (cellSize - 1) / 2 + 'px';
             // cell.innerHTML = idx.toString();
-            cell.addEventListener('mousedown', function (e) { changeCellType(e, pointType); });
-            cell.addEventListener('mouseenter', function (e) { changeCellTypeIfDragged(e, pointType); });
+            cell.addEventListener('mousedown', function(e) { changeCellType(e, pointType); });
+            cell.addEventListener('mouseenter', function(e) { changeCellTypeIfDragged(e, pointType); });
 
             column.appendChild(cell);
         }
@@ -221,12 +221,12 @@ function drawPath(cellPath, delay) {
     clearInterval(id);
     id = setInterval(drawPathCell, delay);
     let cell = cellPath[idx];
+
     function drawPathCell() {
         if (idx == cellPath.length) {
             drawingPath = false;
             clearInterval(id);
-        }
-        else {
+        } else {
             changeCellType(null, 'path', cell);
             cellAnimation(cell);
             idx += 1;

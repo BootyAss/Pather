@@ -1,37 +1,38 @@
 var Algorithms = {
-    Astar: function (e) { _Astar(e) },
-    Dijkstra: function (e) { _Dijkstra(e) },
-    BFS: function (start, end, x, y, walls) { return _BFS(start, end, x, y, walls) },
-    Maze: function (x, y) { return _Maze(x, y) },
+    Astar: function(e) { _Astar(e) },
+    Dijkstra: function(e) { _Dijkstra(e) },
+    BFS: function(start, end, x, y, walls) { return _BFS(start, end, x, y, walls) },
+    Maze: function(x, y) { return _Maze(x, y) },
     diagonalMoves: false
 };
 
 function _Astar(e) { return e; };
+
 function _Dijkstra(e) { return e; };
 
 
 function getReachableNeighbours(idx, x, y) {
     let directions = [];
     if (idx >= x)
-        directions.push(idx - x);   // top
+        directions.push(idx - x); // top
     if (idx < x * (y - 1))
-        directions.push(idx + x);   // bot
+        directions.push(idx + x); // bot
     if ((idx % x) != 0)
-        directions.push(idx - 1);   // left
+        directions.push(idx - 1); // left
     if ((idx % x) != (x - 1))
-        directions.push(idx + 1);   // right
+        directions.push(idx + 1); // right
 
     if (!Algorithms.diagonalMoves)
         return directions;
 
     if (idx >= x && idx % x != 0)
-        directions.push(idx - x - 1);   // top-left
+        directions.push(idx - x - 1); // top-left
     if (idx < x * (y - 1) && idx % x != x - 1)
-        directions.push(idx - x + 1);   // top-right
+        directions.push(idx - x + 1); // top-right
     if (idx % x != 0 && idx % x != 0)
-        directions.push(idx + x - 1);   // bot-left
+        directions.push(idx + x - 1); // bot-left
     if (idx % x != x - 1 && idx % x != x - 1)
-        directions.push(idx + x + 1);   // bot-right
+        directions.push(idx + x + 1); // bot-right
 
     return directions;
 }
@@ -100,28 +101,28 @@ function getNeighbours(A, x, y) {
 
     let n = 0;
     for (let idx of A) {
-        n = idx - 2 * x;    // top
+        n = idx - 2 * x; // top
         if (n >= 0 && !(A.includes(n))) {
             if (!directions[idx])
                 directions[idx] = [];
             directions[idx].push(n);
         }
-        n = idx + 2 * x;    // bot
+        n = idx + 2 * x; // bot
         if (n < x * y && !(A.includes(n))) {
             if (!directions[idx])
                 directions[idx] = [];
             directions[idx].push(n);
         }
 
-        n = idx - 2;    // left
-        if ((idx % x) != 0 && !(A.includes(n))) {
+        n = idx - 2; // left
+        if ((idx % x) > 1 && !(A.includes(n))) {
             if (!directions[idx])
                 directions[idx] = [];
             directions[idx].push(n);
         }
 
-        n = idx + 2;    // right
-        if ((idx % x) != (x - 1) && !(A.includes(n))) {
+        n = idx + 2; // right
+        if ((idx % x) < (x - 2) && !(A.includes(n))) {
             if (!directions[idx])
                 directions[idx] = [];
             directions[idx].push(n);
@@ -139,17 +140,15 @@ function _Maze(x, y) {
     let sets = {}
     let maxIdx = x * y;
     let out = '';
-    for (let i = 0; i < x; i++) {
-        for (let j = 0; j < y; j++) {
+    for (let i = 0; i < y; i++) {
+        for (let j = 0; j < x; j++) {
             if (i % 2 == 0 && j % 2 == 0) {
                 sets[i * x + j] = Array(1);
                 sets[i * x + j][0] = i * x + j;
-            }
-            else
-                walls[i * x + j] = true
+            } else
+                walls[i * x + j] = true;
         }
     }
-    console.log(sets)
 
     let i = 0;
     while (i < (x * y)) {
@@ -159,25 +158,32 @@ function _Maze(x, y) {
             break;
         }
         let keyA = parseInt(keys[rand(keys.length - 1)]);
+        // console.log('keyA:', keyA);
 
         let nghsDict = getNeighbours(sets[keyA], x, y); // { keyA -> [keyA nghbs] } 
+        // console.log('dict:', nghsDict);
 
         let nghKeysA = (Object.keys(nghsDict));
+        // console.log('parents:', nghKeysA);
         if (nghKeysA.length <= 0)
             continue;
 
         let orig = nghKeysA[rand(nghKeysA.length - 1)];
-        let nghs = nghsDict[orig];                      // keyA nghbs
+        // console.log('parent:', orig);
+
+        let nghs = nghsDict[orig]; // keyA nghbs
+        // console.log('childs:', nghs);
         let elemB = nghs[rand(nghs.length - 1)];
+        // console.log('child:', elemB);
         let keyB = getKeyByValue(sets, elemB);
+        // console.log('key B:', keyB);
 
         for (let j = 0; j < sets[keyB].length; j++)
             sets[keyA].push(sets[keyB][j]);
         delete sets[keyB];
         delete walls[elemB - (elemB - orig) / 2];
+        // console.log('\n');
     }
-
-
 
     return walls;
 }

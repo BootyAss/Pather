@@ -4,21 +4,48 @@
     <link rel='stylesheet' href='static/style.css' type='text/css'>
     <link rel='preconnect' href='https://fonts.googleapis.com'>
     <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
-    <link href='https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;600&family=Poiret+One&family=Righteous&display=swap' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;600&family=Poiret+One&family=Righteous&display=swap' rel='stylesheet'>
 </head>
 
 <body>
     <div class='navbar'>
-        <div class='navBlock maze-container'></div>
+        <div class='navBlock container vertical'>
+            <div class='navBlock container name'>Mazes</div>
+            <div class='navBlock container' id='mazes'></div>
+        </div>
+
         <div class='navBlock separator'>
             <div class='sepline'></div>
         </div>
-        <div class='navBlock type-container'></div>
+
+        <div class='navBlock container vertical'>
+            <div class='navBlock container name'>Legend</div>
+            <div class='navBlock container' id='types'></div>
+            <div class='navBlock container bot' id='colors'></div>
+        </div>
+
         <div class='navBlock separator'>
             <div class='sepline'></div>
         </div>
-        <div class='navBlock algorithm-container'></div>
+
+        <div class='navBlock container vertical' id='vertical'>
+            <div class='navBlock container' id='points'></div>
+            <div class='navBlock container bot' id='logos'></div>
+            <div class='navBlock container'>
+                <div class='button' id='button'>Visualize</div>
+            </div>
+        </div>
+
+        <div class='navBlock separator'>
+            <div class='sepline'></div>
+        </div>
+
+        <div class='navBlock container vertical'>
+            <div class='navBlock container name'>Algorithms</div>
+            <div class='navBlock container' id='algs'></div>
+        </div>
     </div>
+
     <div class='content' id='cont'>
         <!-- <div class='help' id='help'></div> -->
         <div class='table-container' id='tabCon'></div>

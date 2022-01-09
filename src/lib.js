@@ -15,10 +15,10 @@ var Points = {
 var Logos = Points;
 
 var AnimSpeeds = {
-    slow: 0.02,
-    average: 0.1,
-    fast: 1.0,
-    instant: 2.0
+    slow: 10,
+    average: 5,
+    fast: 0,
+    instant: 0
 }
 
 
@@ -26,11 +26,21 @@ var Lib = {
     rand: (len) => { return _rand(len); },
     getNeighbours: (idx, x, y, k) => { return _getNeighbours(idx, x, y, k); },
     getNeighbour: (idx, dir, x, y, k) => { return _getNeighbour(idx, dir, x, y, k); },
+    shuffle: (arr) => { return _shuffle(arr); },
 }
 
 var _rand = (len) => {
     return Math.round(Math.random() * len);
 };
+
+function _shuffle(array) {
+    let arr = Array.from(array);
+    for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
 
 
 var _getNeighbour = (idx, dir, x, y, k) => {

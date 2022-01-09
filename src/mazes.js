@@ -21,7 +21,7 @@ var _Kruskal = (x, y) => {
 
     let setsKeys = Object.keys(sets);
     while (setsKeys.length > 1) {
-        let keyA = setsKeys[_rand(setsKeys.length - 1)];
+        let keyA = setsKeys[Lib.rand(setsKeys.length - 1)];
         let A = sets[keyA];
 
         let parent = null;
@@ -39,7 +39,7 @@ var _Kruskal = (x, y) => {
         if (!neighbours.length)
             break;
 
-        let neighbour = neighbours[_rand(neighbours.length - 1)];
+        let neighbour = neighbours[Lib.rand(neighbours.length - 1)];
         let keyB = setsKeys.find(key => sets[key].has(neighbour));
         let B = sets[keyB];
         for (let b of B)

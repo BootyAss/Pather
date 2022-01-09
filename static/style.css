@@ -15,7 +15,7 @@ body {
     display: flex;
     justify-content: space-evenly;
     width: 100vw;
-    height: 150px;
+    height: 160px;
     background-color: #ff907d;
 }
 
@@ -118,11 +118,11 @@ body {
 }
 
 .alg.current {
-    font-weight: 1000;
+    transform: scale(1.2);
 }
 
 .speed.current {
-    font-weight: 1000;
+    transform: scale(1.2);
 }
 
 .button {

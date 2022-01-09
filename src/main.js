@@ -1,4 +1,5 @@
 import { Types, Colors, Points, Logos, AnimSpeeds } from "./lib.js";
+import { Lib } from "./lib.js";
 import { Algs } from "./algs.js";
 import { Mazes } from "./mazes.js";
 
@@ -13,7 +14,7 @@ var walls = new Set();
 
 var current = {
     animatedMazes: !false,
-    animationSpeed: "instant",
+    animationSpeed: "fast",
     drawing: false,
     PointType: "wall",
     Algorithm: Algs.Astar,
@@ -24,23 +25,29 @@ var startCellAnimation = (cell) => {
     return new Promise((resolve) => {
         let minScale = 0.1;
         let maxScale = 1.0;
-        let delta = AnimSpeeds[current.animationSpeed];
-        if (delta == AnimSpeeds.instant) resolve(true);
+        let delta = 0.03;
+        if (current.animationSpeed == "instant") {
+            resolve(true);
+            return;
+        }
         let scale = minScale;
         cell.style.transform = "scale(" + scale + ")";
 
         let timer = setInterval(animateCell, 1);
         let allow = true;
+        let iter = 0;
 
         function animateCell() {
             if (scale >= maxScale - delta) {
                 allow = false;
                 cell.style.transform = "scale(" + maxScale.toString() + ")";
-                resolve(true);
                 clearInterval(timer);
             }
             if (allow) {
+                iter++;
                 scale += delta;
+                if (iter > AnimSpeeds[current.animationSpeed])
+                    resolve(true);
                 cell.style.transform = "scale(" + scale.toString() + ")";
             }
         }
@@ -64,9 +71,11 @@ var changeCellType = async(cell, type, id = null, anim = true) => {
     if (anim) return startCellAnimation(cell).then((ret) => true);
 };
 
-var changeArrayOfCells = async(cells, type, anim = true) => {
+var changeArrayOfCells = async(cells, type, anim = true, shuffle = false) => {
     if (current.drawing) return;
     current.drawing = true;
+    if (shuffle)
+        cells = Lib.shuffle(cells);
     for (let cell of cells) {
         let ret = await changeCellType(null, type, cell, anim).then((ret) => true);
     }
@@ -146,7 +155,7 @@ var navClickHandler = (e) => {
             clearTable();
             walls = Mazes[foo](x, y);
             if (walls.size) {
-                changeArrayOfCells(walls, "wall", current.animatedMazes);
+                changeArrayOfCells(walls, "wall", current.animatedMazes, true);
             }
             break;
 
@@ -158,7 +167,7 @@ var navClickHandler = (e) => {
             break;
 
         case "speed":
-            foo = getFromModule(e.target.textContent, animSpeeds);
+            foo = getFromModule(e.target.textContent, AnimSpeeds);
             if (!foo) break;
             current.animationSpeed = foo;
             break;

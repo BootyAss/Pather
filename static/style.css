@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
     min-width: 800px;
+    user-select: none;
     font-family: Comfortaa;
     font-size: 16px;
     font-weight: 300;
@@ -19,7 +20,7 @@ body {
 }
 
 .navBlock {
-    width: 24vw;
+    width: 19vw;
     height: 175px;
 }
 
@@ -35,18 +36,17 @@ body {
 }
 
 .navBlock.container.name {
-    /* margin-bottom: -40px; */
     height: 150px;
     font-size: 20px;
     font-weight: 200;
 }
 
 .navBlock.container.bot {
-    margin-top: -20px;
+    margin-top: -30px;
 }
 
 .navBlock.separator {
-    width: 1.3vw;
+    width: 1.25vw;
     height: 100%;
 }
 
@@ -82,7 +82,7 @@ body {
     background-color: #FEE440;
 }
 
-.color.variant {
+.color.visited {
     background-color: #A2D2FF;
 }
 
@@ -111,6 +111,18 @@ body {
 
 .logo.wall {
     background-color: #9F5F80;
+}
+
+.logo.current {
+    transform: scale(1.2);
+}
+
+.alg.current {
+    font-weight: 1000;
+}
+
+.speed.current {
+    font-weight: 1000;
 }
 
 .button {
@@ -163,14 +175,16 @@ body {
     height: 0;
     font-size: 10px;
     background-size: cover;
-    background-color: #A2D2FF;
+    /* background-color: #A2D2FF; */
 }
 
 .cell.start {
+    border: 1px solid #00000050;
     background-image: url(start.png)
 }
 
 .cell.end {
+    border: 1px solid #00000050;
     background-image: url(end.png)
 }
 
@@ -188,6 +202,6 @@ body {
     background-color: #FEE440;
 }
 
-.cell.variant {
+.cell.visited {
     background-color: #A2D2FF;
 }

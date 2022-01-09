@@ -2,7 +2,7 @@ var Types = {
     empty: 'empty',
     wall: 'wall',
     path: 'path',
-    variant: 'variant',
+    visited: 'visited',
 }
 
 
@@ -17,6 +17,12 @@ var Points = {
 
 var Logos = Points;
 
+var animSpeeds = {
+    slow: 0.02,
+    average: 0.1,
+    fast: 0.5,
+    instant: 1.0
+}
 
 var Lib = {
     rand: (len) => { return _rand(len); },
@@ -53,6 +59,7 @@ var Algs = {
 
 var _Astar = (x, y, start, end, walls) => {
     let queue = [start];
+    let visited = [];
     let cameFrom = {};
     cameFrom.start = null;
 
@@ -61,6 +68,8 @@ var _Astar = (x, y, start, end, walls) => {
         current = queue.shift();
         if (current == end)
             break;
+        if (current != start)
+            visited.push(current);
         
         let neighbours = Lib.getNeighbours(current, null, x, y, 1);
         for (let neighbour of neighbours) {
@@ -75,13 +84,13 @@ var _Astar = (x, y, start, end, walls) => {
     let path = [];
     while (current != start) {
         if (!(current in cameFrom))
-            return null;
+            return [null, null];
         current = cameFrom[current];
         path.push(current);
     }
     path.pop();
     path.reverse();
-    return path;
+    return [path, visited];
     
 }
 
@@ -133,4 +142,4 @@ var _Kruskal = (x, y) => {
     return walls;
 };
 
-export { Types, Colors, Points, Logos, Mazes, Algs };
+export { Types, Colors, Points, Logos, animSpeeds, Mazes, Algs };

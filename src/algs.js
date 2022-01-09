@@ -10,6 +10,7 @@ var Colors = Types;
 
 
 var Points = {
+    wall: 'wall',
     start: 'start',
     end: 'end'
 }
@@ -19,11 +20,29 @@ var Logos = Points;
 
 var Lib = {
     rand: (len) => { return _rand(len); },
+    getNeighbours: (idx, A, x, y, k) => { return _getNeighbours(idx, A, x, y, k); },
 }
 
 var _rand = (len) => {
     return Math.round(Math.random() * len);
 };
+
+var _getNeighbours = (idx, A=null, x, y, k) => {
+    let indexes = [idx - k * x, idx - k, idx + k, idx + k * x];
+    let checks = [idx > k * x, idx % x >= k, idx % x < x - k, idx < x * (y - 1)];
+    let neighbours = []
+
+    if (A) {
+        for (let i = 0; i < 4; i++)
+            if (checks[i] && !A.has(indexes[i]))
+                neighbours.push(indexes[i]);
+    } else {
+        for (let i = 0; i < 4; i++)
+            if (checks[i])
+                neighbours.push(indexes[i]);
+    }
+    return neighbours;
+}
 
 
 var Algs = {
@@ -33,23 +52,41 @@ var Algs = {
 };
 
 var _Astar = (x, y, start, end, walls) => {
-    return [0, x, 2 * x, 2 * x + 1, 2 * x + 2, 2 * x + 3, 2 * x + 4];
+    let queue = [start];
+    let cameFrom = {};
+    cameFrom.start = null;
+
+    let current = null;
+    while (queue.length) {
+        current = queue.shift();
+        if (current == end)
+            break;
+        
+        let neighbours = Lib.getNeighbours(current, null, x, y, 1);
+        for (let neighbour of neighbours) {
+            if (walls.has(neighbour) || neighbour in cameFrom)
+                continue;
+            queue.push(neighbour);
+            cameFrom[neighbour] = current;
+        }
+    }
+
+    current = end;
+    let path = [];
+    while (current != start) {
+        if (!(current in cameFrom))
+            return null;
+        current = cameFrom[current];
+        path.push(current);
+    }
+    path.pop();
+    path.reverse();
+    return path;
+    
 }
 
 var Mazes = {
     Kruskal: (x, y) => { return _Kruskal(x, y); },
-}
-
-var getNeighbours = (idx, A, x, y) => {
-    let indexes = [idx - 2 * x, idx - 2, idx + 2, idx + 2 * x];
-    let checks = [idx > 2 * x, idx % x > 1, idx % x < x - 2, idx < x * (y - 1)];
-    let neighbours = []
-
-    for (let i = 0; i < 4; i++) {
-        if (checks[i] && !A.has(indexes[i]))
-            neighbours.push(indexes[i]);
-    }
-    return neighbours;
 }
 
 var _Kruskal = (x, y) => {
@@ -74,7 +111,7 @@ var _Kruskal = (x, y) => {
         let neighbours = null;
         for (let p of A) {
             parent = p;
-            neighbours = getNeighbours(parent, A, x, y);
+            neighbours = Lib.getNeighbours(parent, A, x, y, 2);
             if (neighbours.length)
                 break;
         }
@@ -96,4 +133,4 @@ var _Kruskal = (x, y) => {
     return walls;
 };
 
-export { Types, Colors, Points, Logos, Lib, Mazes, Algs };
+export { Types, Colors, Points, Logos, Mazes, Algs };

@@ -98,6 +98,7 @@ body {
     text-align: center;
     border-radius: 4px;
     background-size: cover;
+    background-color: #A2D2FF;
 }
 
 .logo.start {
@@ -106,6 +107,10 @@ body {
 
 .logo.end {
     background-image: url(end.png)
+}
+
+.logo.wall {
+    background-color: #9F5F80;
 }
 
 .button {
@@ -157,6 +162,16 @@ body {
     width: 0;
     height: 0;
     font-size: 10px;
+    background-size: cover;
+    background-color: #A2D2FF;
+}
+
+.cell.start {
+    background-image: url(start.png)
+}
+
+.cell.end {
+    background-image: url(end.png)
 }
 
 .cell.empty {

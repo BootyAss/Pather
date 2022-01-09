@@ -15,13 +15,13 @@ body {
     display: flex;
     justify-content: space-evenly;
     width: 100vw;
-    height: 175px;
+    height: 150px;
     background-color: #ff907d;
 }
 
 .navBlock {
     width: 19vw;
-    height: 175px;
+    height: 150px;
 }
 
 .navBlock.container {
@@ -53,7 +53,7 @@ body {
 .sepline {
     margin: 12px auto;
     width: 1px;
-    height: 150px;
+    height: 126px;
     background-color: #9f5f8088;
 }
 
@@ -98,7 +98,7 @@ body {
     text-align: center;
     border-radius: 4px;
     background-size: cover;
-    background-color: #A2D2FF;
+    background-color: #FEF9EF;
 }
 
 .logo.start {
@@ -126,9 +126,14 @@ body {
 }
 
 .button {
-    padding: 30px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    width: 100px;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 30px;
+    /* padding: 20px; */
+    /* padding-top: 10px; */
+    /* padding-bottom: 10px; */
     border: 1px solid #FEF9EF;
     border-radius: 5px;
     cursor: pointer;

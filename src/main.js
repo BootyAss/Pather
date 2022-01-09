@@ -3,7 +3,7 @@ import { Types, Colors, Points, Logos, animSpeeds, Mazes, Algs } from './lib.js'
 
 var [x, y] = [null, null];
 var [xPerc, yPerc] = [0.95, 0.75];
-var cellSize = 29;
+var cellSize = 22;
 var drawCellId = false;
 
 var start = null;

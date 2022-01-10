@@ -1,4 +1,11 @@
-import { Types, Colors, Points, Logos, AnimSpeeds } from "./lib.js";
+import {
+    Types,
+    Colors,
+    Points,
+    Logos,
+    ClassColors,
+    AnimSpeeds,
+} from "./lib.js";
 import { Lib } from "./lib.js";
 import { Algs } from "./algs.js";
 import { Mazes } from "./mazes.js";
@@ -21,34 +28,73 @@ var current = {
     mousedown: 0,
 };
 
+var hexToRgb = (str) => {
+    let rgb = [
+        parseInt(str.slice(1, 3), 16),
+        parseInt(str.slice(3, 5), 16),
+        parseInt(str.slice(5, 7), 16),
+    ];
+    return rgb;
+};
+
+var rgbToHex = (rgb) => {
+    let str = "#";
+    for (let c of rgb) str += Math.floor(c).toString(16);
+    return str;
+};
+
 var startCellAnimation = (cell) => {
     return new Promise((resolve) => {
+        if (current.animationSpeed == "instant") return resolve(true);
+
+        let speed = AnimSpeeds[current.animationSpeed] + 1;
+
         let minScale = 0.1;
         let maxScale = 1.0;
-        let delta = 0.03;
-        if (current.animationSpeed == "instant") {
-            resolve(true);
-            return;
-        }
+        let delta = 0.03 / speed;
         let scale = minScale;
         cell.style.transform = "scale(" + scale + ")";
 
+        let className = cell.className.substring(5);
+        let bckgC = ClassColors[cell.className.substring(5)];
+        let endC = hexToRgb(bckgC);
+        let minC = Math.min(...endC);
+        let startC = [
+            endC[0] - minC, //
+            endC[1] - minC,
+            endC[2] - minC,
+        ];
+        if (className == "path") startC = [1, 250, 1];
+        let deltaC = [
+            (endC[0] - startC[0]) / (30 * speed),
+            (endC[1] - startC[1]) / (30 * speed),
+            (endC[2] - startC[2]) / (30 * speed),
+        ];
+        let color = startC;
+        cell.style.backgroundColor = rgbToHex(color);
+
         let timer = setInterval(animateCell, 1);
-        let allow = true;
         let iter = 0;
+        let resolved = false;
 
         function animateCell() {
-            if (scale >= maxScale - delta) {
-                allow = false;
+            if (scale >= maxScale) {
                 cell.style.transform = "scale(" + maxScale.toString() + ")";
+                cell.style.backgroundColor = rgbToHex(endC);
                 clearInterval(timer);
-            }
-            if (allow) {
+            } else {
                 iter++;
-                scale += delta;
-                if (iter > AnimSpeeds[current.animationSpeed])
+                if (iter > AnimSpeeds[current.animationSpeed] && !resolved) {
                     resolve(true);
+                    resolved = true;
+                }
+                scale += delta;
                 cell.style.transform = "scale(" + scale.toString() + ")";
+            }
+
+            if (color[0] < endC[0]) {
+                for (let i in color) color[i] += deltaC[i];
+                cell.style.backgroundColor = rgbToHex(color);
             }
         }
     });
@@ -68,14 +114,13 @@ var changeCellType = async(cell, type, id = null, anim = true) => {
         size -= 2;
     }
     cell.style.padding = size / 2 + "px";
+    cell.style.backgroundColor = ClassColors[type];
     if (anim) return startCellAnimation(cell).then((ret) => true);
 };
 
-var changeArrayOfCells = async(cells, type, anim = true, shuffle = false) => {
+var changeArrayOfCells = async(cells, type, anim = true) => {
     if (current.drawing) return;
     current.drawing = true;
-    if (shuffle)
-        cells = Lib.shuffle(cells);
     for (let cell of cells) {
         let ret = await changeCellType(null, type, cell, anim).then((ret) => true);
     }
@@ -117,7 +162,7 @@ var createCell = (type, id) => {
 
 var clearTable = () => {
     for (let i = 0; i < x * y; i++) {
-        walls = new Set();
+        // walls = new Set();
         changeCellType(null, "empty", i, false);
     }
     start = null;
@@ -154,9 +199,8 @@ var navClickHandler = (e) => {
 
             clearTable();
             walls = Mazes[foo](x, y);
-            if (walls.size) {
+            if (walls.size)
                 changeArrayOfCells(walls, "wall", current.animatedMazes, true);
-            }
             break;
 
         case "alg":

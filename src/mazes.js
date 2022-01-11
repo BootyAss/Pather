@@ -7,6 +7,9 @@ var Mazes = {
     Spiral: (x, y) => {
         return _Spiral(x, y);
     },
+    StarWhat: (x, y) => {
+        return _StarWhat(x, y);
+    },
 };
 
 var _Kruskal = (x, y) => {
@@ -85,5 +88,23 @@ var _Spiral = (x, y) => {
 
     return walls;
 };
+
+var _StarWhat = (x, y) => {
+    let walls = new Set();
+    let current = x * (y - 1);
+    let dir = -1;
+
+    for (let i = 0; i < Math.max(x, y) - 1; i++) {
+        walls.add(current);
+        if (current < 2 * x && dir == -1)
+            dir = 1;
+        if (current > x * (y - 2) && dir == 1)
+            dir = -1;
+
+        current += dir * (x + dir);
+    }
+
+    return walls;
+}
 
 export { Mazes };

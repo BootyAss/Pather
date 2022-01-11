@@ -10,7 +10,7 @@ import { Lib } from "./lib.js";
 import { Algs } from "./algs.js";
 import { Mazes } from "./mazes.js";
 
-// var [x, y] = [4, 3];
+// var [x, y] = [5, 3];
 // var [start, end] = [90, 110];
 var [x, y] = [null, null];
 var [start, end] = [null, null];
@@ -26,7 +26,7 @@ var current = {
     animationSpeed: "fast",
     drawing: false,
     PointType: "wall",
-    Algorithm: Algs.Astar,
+    Algorithm: null,
     optimized: false,
     mousedown: 0,
 };
@@ -138,10 +138,9 @@ var changeArrayOfCells = async(cells, type, anim = true) => {
 };
 
 var Visualize = async() => {
-    if (current.drawing) {
-        if (start === null || end === null) alert("No start/end node");
-        return;
-    }
+    if (start === null || end === null) return alert("Set start and end nodes");
+    if (current.Algorithm == null) return alert("Pick an algorithm");
+    if (current.drawing) return
 
     clearPath();
     let [path, visited] = current.Algorithm(
@@ -203,9 +202,10 @@ var getFromModule = (name, module) => {
 var navClickHandler = (e) => {
     let foo = null;
     let classArr = e.target.className.split(" ");
+    let name = labelToJs(e.target.textContent)
     switch (classArr[0]) {
         case "maze":
-            foo = getFromModule(e.target.textContent, Mazes);
+            foo = getFromModule(name, Mazes);
             if (!foo || current.drawing) return;
 
             clearTable();
@@ -215,14 +215,14 @@ var navClickHandler = (e) => {
             break;
 
         case "alg":
-            foo = getFromModule(e.target.textContent, Algs);
+            foo = getFromModule(name, Algs);
             if (!foo || current.drawing) return;
 
             current.Algorithm = Algs[foo];
             break;
 
         case "speed":
-            foo = getFromModule(e.target.textContent, AnimSpeeds);
+            foo = getFromModule(name, AnimSpeeds);
             if (!foo) break;
             current.animationSpeed = foo;
             break;
@@ -304,6 +304,40 @@ var cellOverHandler = (e) => {
     }
 };
 
+var labelToHtml = (label) => {
+    label = label.replace("_", " ");
+    label = label.replace("start", "temp");
+    label = label.replace("star", "*");
+    label = label.replace("temp", "start");
+    return label
+}
+
+var labelToJs = (label) => {
+    label = label.replace(" ", " ");
+    label = label.replace("start", "temp");
+    label = label.replace("*", "star");
+    label = label.replace("temp", "start");
+    return label
+}
+
+var hideHelp = () => {
+    let help = document.getElementById("help");
+
+    let opacity = 1.0;
+    let timer = setInterval(animateFadeOut, 1);
+
+    function animateFadeOut() {
+        if (opacity < 0) {
+            help.style.display = "none";
+            help.style.opacity = 0;
+            clearInterval(timer);
+        } else {
+            opacity -= 0.03;
+            help.style.opacity = opacity;
+        }
+    }
+}
+
 var setup = () => {
     let blocks = {
         mazes: Object.keys(Mazes),
@@ -320,9 +354,11 @@ var setup = () => {
         for (let label of labels) {
             let navLabel = document.createElement("div");
             navLabel.className = block.slice(0, -1);
+
             if (!["colors", "logos"].includes(block))
-                navLabel.textContent = label.replace("_", " ");
+                navLabel.textContent = labelToHtml(label);
             else navLabel.className = navLabel.className + " " + label;
+
             if (["logos", "algs", "mazes", "speeds"].includes(block)) {
                 navLabel.style.cursor = "pointer";
                 navLabel.onclick = navClickHandler;
@@ -369,6 +405,8 @@ var setup = () => {
     document.getElementById("visual").onclick = Visualize;
     document.getElementById("clsPat").onclick = clearPath;
     document.getElementById("optim").onclick = toggleOptimization;
+    document.getElementById("but").onclick = hideHelp;
+
 };
 
 setup();

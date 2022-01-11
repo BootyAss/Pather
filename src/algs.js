@@ -87,7 +87,11 @@ var _AstarOpt = (x, y, start, end, walls) => {
                 if (n in g && score >= g[n])
                     continue;
 
-            cameFrom[n] = current;
+            if (!(n in cameFrom))
+                cameFrom[n] = current;
+            else if (f[cameFrom[n]] > f[current])
+                cameFrom[n] = current;
+
             g[n] = score;
             f[n] = g[n] + _getEvristicValue(n, end, x, y);
 

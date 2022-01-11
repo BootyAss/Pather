@@ -1,10 +1,13 @@
-import { Lib } from './lib.js';
-
+import { Lib } from "./lib.js";
 
 var Mazes = {
-    Kruskal: (x, y) => { return _Kruskal(x, y); },
-    Spiral: (x, y) => { return _Spiral(x, y); },
-}
+    Kruskal: (x, y) => {
+        return _Kruskal(x, y);
+    },
+    Spiral: (x, y) => {
+        return _Spiral(x, y);
+    },
+};
 
 var _Kruskal = (x, y) => {
     let walls = new Set();
@@ -13,10 +16,8 @@ var _Kruskal = (x, y) => {
     for (let i = 0; i < y; i++)
         for (let j = 0; j < x; j++) {
             let idx = i * x + j;
-            if (i % 2 || j % 2)
-                walls.add(idx);
-            else
-                sets[idx] = new Set([idx]);
+            if (i % 2 || j % 2) walls.add(idx);
+            else sets[idx] = new Set([idx]);
         }
 
     let setsKeys = Object.keys(sets);
@@ -30,30 +31,24 @@ var _Kruskal = (x, y) => {
             parent = p;
             let neighboursTemp = Lib.getNeighbours(parent, x, y, 2);
             for (let n of neighboursTemp)
-                if (!A.has(n))
-                    neighbours.push(n);
+                if (!A.has(n)) neighbours.push(n);
 
-            if (neighbours.length)
-                break;
+            if (neighbours.length) break;
         }
-        if (!neighbours.length)
-            break;
+        if (!neighbours.length) break;
 
         let neighbour = neighbours[Lib.rand(neighbours.length - 1)];
-        let keyB = setsKeys.find(key => sets[key].has(neighbour));
+        let keyB = setsKeys.find((key) => sets[key].has(neighbour));
         let B = sets[keyB];
-        for (let b of B)
-            sets[keyA].add(b);
+        for (let b of B) sets[keyA].add(b);
 
         walls.delete(neighbour - (neighbour - parent) / 2);
         const index = setsKeys.indexOf(keyB);
-        if (index > -1)
-            setsKeys.splice(index, 1);
+        if (index > -1) setsKeys.splice(index, 1);
     }
 
     return walls;
 };
-
 
 var _Spiral = (x, y) => {
     let walls = new Set();
@@ -61,9 +56,9 @@ var _Spiral = (x, y) => {
         [-1, 3],
         [-1, 2],
         [x * y, 1],
-        [x * y, 0]
+        [x * y, 0],
     ];
-    let modeKey = Lib.rand(modes.length - 1)
+    let modeKey = Lib.rand(modes.length - 1);
     let startMode = modes[modeKey];
 
     let current = startMode[0];
@@ -71,7 +66,10 @@ var _Spiral = (x, y) => {
 
     let sideLenX = x - 1 + ((modeKey + 1) % 2);
     let sideLenY = y - 1 + (modeKey % 2);
-    while (((direction % 2) && sideLenX > 1) || (!(direction % 2) && sideLenY > 1)) {
+    while (
+        (direction % 2 && sideLenX > 1) ||
+        (!(direction % 2) && sideLenY > 1)
+    ) {
         let sideLen = direction % 2 ? sideLenX : sideLenY;
         for (let j = 0; j < sideLen; j++) {
             let neighbour = Lib.getNeighbour(current, direction, x, y, 1);
@@ -79,15 +77,13 @@ var _Spiral = (x, y) => {
             walls.add(current);
         }
 
-        if (direction % 2)
-            sideLenX -= 2;
-        else
-            sideLenY -= 2;
+        if (direction % 2) sideLenX -= 2;
+        else sideLenY -= 2;
 
-        direction = ((direction + 3) % 4);
+        direction = (direction + 3) % 4;
     }
 
     return walls;
-}
+};
 
 export { Mazes };

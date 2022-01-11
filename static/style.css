@@ -42,7 +42,7 @@ body {
 }
 
 .navBlock.container.bot {
-    margin-top: -30px;
+    margin-top: -20px;
 }
 
 .navBlock.separator {
@@ -209,4 +209,10 @@ body {
 
 .cell.visited {
     background-color: #A2D2FF;
+}
+
+#optim {
+    width: 0;
+    text-decoration: line-through;
+    cursor: pointer;
 }

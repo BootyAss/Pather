@@ -53,7 +53,7 @@ function _shuffle(array) {
 
 var _getNeighbour = (idx, dir, x, y, k) => {
     let res = [idx - k * x, idx - k, idx + k * x, idx + k];
-    let checks = [idx > k * x, idx % x >= k, idx < x * (y - 1), idx % x < x - k];
+    let checks = [idx >= k * x, idx % x >= k, idx < x * (y - 1), idx % x < x - k];
     let ret = [null, true];
 
     if (dir < 0 || dir > 3) return ret;

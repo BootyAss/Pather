@@ -10,13 +10,15 @@ import { Lib } from "./lib.js";
 import { Algs } from "./algs.js";
 import { Mazes } from "./mazes.js";
 
+// var [x, y] = [4, 3];
+// var [start, end] = [90, 110];
 var [x, y] = [null, null];
+var [start, end] = [null, null];
+
 var [xPerc, yPerc] = [0.9, 0.75];
-var cellSize = 22;
+var cellSize = 25;
 var drawCellId = !true;
 
-var start = null;
-var end = null;
 var walls = new Set();
 
 var current = {
@@ -25,6 +27,7 @@ var current = {
     drawing: false,
     PointType: "wall",
     Algorithm: Algs.Astar,
+    optimized: false,
     mousedown: 0,
 };
 
@@ -41,6 +44,13 @@ var rgbToHex = (rgb) => {
     let str = "#";
     for (let c of rgb) str += Math.floor(c).toString(16);
     return str;
+};
+
+var toggleOptimization = (e) => {
+    current.optimized = !current.optimized;
+    let tar = e.target;
+    let val = tar.style.textDecoration;
+    tar.style.textDecoration = val == "none" ? "line-through" : "none";
 };
 
 var startCellAnimation = (cell) => {
@@ -139,7 +149,8 @@ var Visualize = async() => {
         parseInt(y),
         parseInt(start),
         parseInt(end),
-        walls
+        walls,
+        current.optimized
     );
     if (path == null) alert("Couldn't find path");
     else {
@@ -336,8 +347,8 @@ var setup = () => {
     table.style.height = y * cellSize + "px";
     tableContainer.appendChild(table);
 
-    start = Math.floor((x * y) / 2 - x / 4);
-    end = Math.floor((x * y) / 2 + x / 4);
+    if (start == null) start = Math.floor((x * y) / 2 - x / 4);
+    if (end == null) end = Math.floor((x * y) / 2 + x / 4);
     for (let i = 0; i < y; i++) {
         let row = document.createElement("div");
         row.className = "row";
@@ -357,6 +368,7 @@ var setup = () => {
     document.getElementById("clsTab").onclick = clearTable;
     document.getElementById("visual").onclick = Visualize;
     document.getElementById("clsPat").onclick = clearPath;
+    document.getElementById("optim").onclick = toggleOptimization;
 };
 
 setup();
